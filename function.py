@@ -26,3 +26,92 @@ def load():  # 2 - Загрузка данных из удаленного хр�
     with open('phone_book.json', 'r', encoding='utf-8') as pb: pb_local = json.load(pb)
     print('\nТелефонная книга из удаленного хранилища успешно загружена\n')
     return pb_local
+
+def print_all_data_contact():  # 3 - вывести по ФИО все данные контакта
+    pb_local = load()
+    print_all_fullname()
+    f_name = pb_local.get(input("Введите ФИО для поиска всех данных: ").lower().strip(), None)
+    if f_name != None:
+        for k, v in f_name.items():
+            if type(v) == list:
+                for i in range(len(v)):
+                    print(k, v[i], sep=' ', end='\n')
+            else:
+                print(k, v)
+    else:
+        print('\nТакого контакта нет')
+    print()
+
+
+def print_phones_contact():  # 4 - вывести по ФИО телефоны
+    pb_local = load()
+    print_all_fullname()
+    f_name = pb_local.get(input("Введите ФИО для поиска всех телефонов: ").lower().strip(), None)
+    if f_name != None:
+        for k, v in f_name.items():
+            if (k == 'mobilephone' or k == 'workphone'):
+                for i in range(len(v)):
+                    print(k, v[i], sep=' ', end='\n')
+    else: print('\nТакого контакта нет')
+    print()
+
+
+def print_all_fullname():  # 5 - вывести все контакты
+    os.system('cls||clear')
+    pb_local = load()
+    print("Список контактов в телефонной книге:")
+    [print(' ', k) for k in pb_local.keys()]
+    print()
+
+def choose_data_type():
+    type_data = None
+    flag = True
+    while flag:
+        print('Выбирете какие данные добавить: ', '1 - mobilephone', '2 - workphone', '3 - email', '4 - birthday', sep='\n')
+        type_data = input('Выбирете цифру (тип телефона): ')
+        match type_data:
+            case '1':
+                type_data = 'mobilephone'
+                flag = False
+            case '2':
+                type_data = 'workphone'
+                flag = False
+            case '3':
+                type_data = 'email'
+                flag = False
+            case '4':
+                type_data = 'birthday'
+                flag = False
+            case _: flag = True
+    return type_data
+
+def create_new_contant():  # 6 - создать новый контакт
+    pb_local = load()
+    print_all_fullname()
+    print('Введите ФИО нового контакта по образцу: Иванов Иван Иванович')
+    f_name = input("Введите ФИО: ").lower().strip()
+    if f_name in pb_local:
+        return print("\033[31m {} \033[0m" .format('\nТакой контакт существует. Выбирете пункт 9 в меню - добавить контактые данные\n'))
+
+    type_data = choose_data_type()
+
+    inp_data = input("Введите данные: ")
+    pb_local.update({f_name: {'mobilephone': [], 'workphone': [], 'email': [], 'birthday': []}})
+    pb_local[f_name][type_data].append(inp_data)
+        
+    save(pb_local)
+    print('Создан контакт и добавлены данные\n')
+
+
+def delete_contact():  # 7 - удалить контакт
+    pb_local = load()
+    print_all_fullname()
+
+    print('\nОбразец для ввода ФИО: Иванов Иван Иванович')
+    f_name = input("Введите ФИО, контака который вы хотите удалить: ").lower().strip()
+    answer = pb_local.get(f_name, None)
+    if answer != None:
+        pb_local.pop(f_name)
+        save(pb_local)
+        print('Контакт удалён.\n')
+    else: print('\nТакого контакта нет\n')
