@@ -115,3 +115,55 @@ def delete_contact():  # 7 - удалить контакт
         save(pb_local)
         print('Контакт удалён.\n')
     else: print('\nТакого контакта нет\n')
+
+def edit_contact():  # 8 - редактировать телефонную книгу
+    pb_local = load()
+    print_all_fullname()
+
+    f_name = input("Введите ФИО контакта который вы хотите редактировать: ").lower().strip()
+    answer = pb_local.get(f_name, None)
+    if answer != None:
+        count = 0
+        dict_res = {}
+        print('\nСписок данных доступных для изменения: ')
+        for k, v in pb_local[f_name].items():
+            if len(v) > 0:
+                for i in v:
+                    dict_res[count] = [k, i]
+                    print(count, k, i)
+                    count += 1         
+            else:
+                dict_res[count] = [k, v]
+                print(count, k, v)
+                count += 1
+
+        type_data = None
+        flag = True
+        while flag:
+            type_data = int(input('Выбирете цифру (0, 1, 2 ...). Данные, которые хотите изменить: '))
+            if dict_res.get(type_data, 0) != 0:
+                try: position = pb_local[f_name][dict_res[type_data][0]].index(dict_res[type_data][1])
+                except: position = -1
+
+                if position >= 0: pb_local[f_name][dict_res[type_data][0]][position] = input('Введите новые данные: ')
+                else: pb_local[f_name][dict_res[type_data][0]] = [(input('Введите новые данные: '))]
+
+                flag = False
+            
+        save(pb_local)
+        print('Контакт отредактирован\n')
+    else: print('\nТакого контакта нет\n')
+
+
+def add_data():  # 9 - добавить контактые данные
+    pb_local = load()
+    print_all_fullname()
+
+    f_name = input("В какой контакт вы хотите добавить данные: ").lower().strip()   
+    type_data = choose_data_type()
+    inp_data = input("Введите данные для добавления: ")
+    if type(pb_local[f_name][type_data]) == list: pb_local[f_name][type_data].append(inp_data)
+    else: pb_local[f_name][type_data] = inp_data
+        
+    save(pb_local)
+    print('\nНовые данные добавлены\nТелефонная книга успешно сохранена в удаленное хранилище\n')
