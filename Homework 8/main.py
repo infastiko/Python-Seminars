@@ -32,4 +32,4 @@ while choice != 0:
         case 7: delete_contact()
         case 8: edit_contact()
         case 9: add_data()
-        case _: print("\nВыбирете пункт меню или выйдите из программы (Цифра: 0)\n")
+        case _: print("\nВыберите пункт меню или выйдите из программы (Цифра: 0)\n")
